@@ -1,0 +1,11 @@
+node_modules
+.env
+secrets.json
+env.sh
+
+#Hardhat files
+cache
+.idea
+addresses/.DS_Store
+wallets.txt
+results.json
