@@ -30,7 +30,6 @@ async function claim(walletsWithAmount, provider, claimContract, tokenContract) 
       console.log(`An error occurred on wallet ${signer.address} while claiming`);
       tempResult.claimTx = `${e}`;
     }
-    await sleep(0.3)
     try {
       await tokenContract.connect(signer).transfer(
         recipient,
