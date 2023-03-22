@@ -15,10 +15,13 @@ async function claim(walletsWithAmount, provider, claimContract, tokenContract) 
     }
     const signer = walletObj.wallet
     const recipient = walletObj.dstAddress
+    let gasPrice = (await provider.getFeeData()).gasPrice.toNumber()
+    gasPrice = gasPrice + config.GAS_PRICE_ADDITION
     try {
       await claimContract.connect(signer).claim(
         {
           gasLimit: config.GAS_LIMIT,
+          gasPrice: gasPrice,
           nonce: await provider.getTransactionCount(signer.address)
         }
       )
@@ -27,12 +30,14 @@ async function claim(walletsWithAmount, provider, claimContract, tokenContract) 
       console.log(`An error occurred on wallet ${signer.address} while claiming`);
       tempResult.claimTx = `${e}`;
     }
+    await sleep(0.3)
     try {
       await tokenContract.connect(signer).transfer(
         recipient,
         walletObj.amount,
         {
           gasLimit: config.GAS_LIMIT,
+          gasPrice: gasPrice,
           nonce: await provider.getTransactionCount(signer.address)
         }
       );
@@ -71,7 +76,6 @@ async function run() {
     provider
   );
   const walletsWithAmount = await getAmounts(wallets, arbiClaimContract);
-
 
   while (true) {
     if ((await infoContract.getL1BlockNumber()).gt("16890400")) {

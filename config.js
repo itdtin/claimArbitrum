@@ -6,5 +6,6 @@ export const config = {
     RPC: "",
     CHAIN_ID: 42161,
     GAS_LIMIT: "1500000",
+    GAS_PRICE_ADDITION: 1000000000, // 1Gwei 
     CHUNCK_SIZE: 5
 }
