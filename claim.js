@@ -15,13 +15,11 @@ async function claim(walletsWithAmount, provider, claimContract, tokenContract) 
     }
     const signer = walletObj.wallet
     const recipient = walletObj.dstAddress
-    let gasPrice = (await provider.getFeeData()).gasPrice.toNumber()
-    gasPrice = gasPrice + config.GAS_PRICE_ADDITION
     try {
       await claimContract.connect(signer).claim(
         {
           gasLimit: config.GAS_LIMIT,
-          gasPrice: gasPrice,
+          gasPrice: config.GAS_PRICE,
           nonce: await provider.getTransactionCount(signer.address)
         }
       )
@@ -36,7 +34,7 @@ async function claim(walletsWithAmount, provider, claimContract, tokenContract) 
         walletObj.amount,
         {
           gasLimit: config.GAS_LIMIT,
-          gasPrice: gasPrice,
+          gasPrice: config.GAS_PRICE,
           nonce: await provider.getTransactionCount(signer.address)
         }
       );
