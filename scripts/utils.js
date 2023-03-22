@@ -106,7 +106,7 @@ export async function getAmounts(
   arbiClaimContract
 ) {
   const getClaimAmount = async (walletsObj) => {
-    let claimableAmount = await arbiClaimContract.claimableTokens(walletsObj.wallet.address);
+    let claimableAmount = config.TEST_MODE ? ethers.utils.parseEther("1000") : await arbiClaimContract.claimableTokens(walletsObj.wallet.address);
     const percentToLeave = generateRandomMultiple100(config.LEAVE_ON_WALLET_MIN, config.LEAVE_ON_WALLET_MAX)
     claimableAmount = claimableAmount.div(10000).mul(10000 - percentToLeave).toString()
     walletsObj.amount = claimableAmount

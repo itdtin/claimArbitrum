@@ -57,6 +57,9 @@ async function run() {
   const provider = new ethers.providers.JsonRpcProvider(config.RPC, config.CHAIN_ID);
   const wallets = await loadWallets("./wallets.txt", provider)
 
+  const claimAddr = config.TEST_MODE ? config.CLAIM_ADDR_TEST : config.CLAIM_ADDR
+  const arbiTokenAddr = config.TEST_MODE ? config.ARBI_TOKEN_TEST : config.ARBI_TOKEN
+
   const infoContract = new ethers.Contract(
     config.INFO_CONTRACT,
     INFO_CONTRACT_ABI,
@@ -64,27 +67,33 @@ async function run() {
   );
 
   const arbiClaimContract = new ethers.Contract(
-    config.CLAIM_ADDR,
+    claimAddr,
     CLAIM_ABI,
     provider
   );
 
   const tokenContract = new ethers.Contract(
-    config.ARBI_TOKEN,
+    arbiTokenAddr,
     TOKEN_ABI,
     provider
   );
   const walletsWithAmount = await getAmounts(wallets, arbiClaimContract);
 
-  while (true) {
-    if ((await infoContract.getL1BlockNumber()).gt("16890400")) {
-      const results = await claim(walletsWithAmount, provider, arbiClaimContract, tokenContract);
-      console.log(results)
-    } else {
-      console.log("It's not time to claim");
-      await sleep(0.5)
+  if (config.TEST_MODE) {
+    const results = await claim(walletsWithAmount, provider, arbiClaimContract, tokenContract);
+    console.log(results)
+  } else {
+    while (true) {
+      if ((await infoContract.getL1BlockNumber()).gt("16890400")) {
+        const results = await claim(walletsWithAmount, provider, arbiClaimContract, tokenContract);
+        console.log(results)
+      } else {
+        console.log("It's not time to claim");
+        await sleep(0.5)
+      }
     }
   }
+
 }
 
 run()
