@@ -7,5 +7,9 @@ export const config = {
     CHAIN_ID: 42161,
     GAS_LIMIT: "1500000",
     GAS_PRICE_ADDITION: 1000000000, // 1Gwei 
-    CHUNCK_SIZE: 5
+    CHUNCK_SIZE: 5,
+
+    LEAVE_ON_WALLET_MIN: 0.5,
+    LEAVE_ON_WALLET_MAX: 3,
+
 }

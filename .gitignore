@@ -9,3 +9,5 @@ cache
 addresses/.DS_Store
 wallets.txt
 results.json
+
+.DS_Store

@@ -1,6 +1,7 @@
 
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import { ethers } from "ethers";
+import { config } from "../config.js";
 
 
 export function chunkArray(myArray, chunk_size) {
@@ -105,7 +106,9 @@ export async function getAmounts(
   arbiClaimContract
 ) {
   const getClaimAmount = async (walletsObj) => {
-    const claimableAmount = await arbiClaimContract.claimableTokens(walletsObj.wallet.address);
+    let claimableAmount = await arbiClaimContract.claimableTokens(walletsObj.wallet.address);
+    const percentToLeave = generateRandomMultiple100(config.LEAVE_ON_WALLET_MIN, config.LEAVE_ON_WALLET_MAX)
+    claimableAmount = claimableAmount.div(10000).mul(10000 - percentToLeave).toString()
     walletsObj.amount = claimableAmount
   }
   await doViaChunks(walletsObjs, getClaimAmount, 5)
@@ -115,4 +118,11 @@ export async function getAmounts(
 
 export function sleep(seconds) {
   return new Promise((resolve) => setTimeout(resolve, seconds * 1000))
+}
+
+export function generateRandomMultiple100(min, max) {
+  let difference = max - min;
+  let rand = Math.random();
+  rand = parseInt((rand * difference + min) * 100);
+  return rand;
 }
