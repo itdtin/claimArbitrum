@@ -44,7 +44,7 @@ async function claim(walletsWithAmount, provider, claimContract, tokenContract) 
     results.push(tempResult)
     await saveJSON(results, "results", true);
   };
-  await doViaChunks(walletsWithAmount, claimFoSigner, 5);
+  await doViaChunks(walletsWithAmount, claimFoSigner, config.CHUNCK_SIZE);
   return results
 }
 

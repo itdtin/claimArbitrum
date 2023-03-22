@@ -5,5 +5,6 @@ export const config = {
 
     RPC: "",
     CHAIN_ID: 42161,
-    GAS_LIMIT: "1500000"
+    GAS_LIMIT: "1500000",
+    CHUNCK_SIZE: 5
 }
