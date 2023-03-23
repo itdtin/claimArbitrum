@@ -15,34 +15,47 @@ async function claim(walletsWithAmount, provider, claimContract, tokenContract) 
     }
     const signer = walletObj.wallet
     const recipient = walletObj.dstAddress
-    try {
-      await claimContract.connect(signer).claim(
-        {
-          gasLimit: config.GAS_LIMIT,
-          gasPrice: config.GAS_PRICE,
-          nonce: await provider.getTransactionCount(signer.address)
-        }
-      )
-      tempResult.claimTx = true
-    } catch (e) {
-      console.log(`An error occurred on wallet ${signer.address} while claiming`);
-      tempResult.claimTx = `${e}`;
+    console.log(`Recipient: ${recipient}`)
+    const nonce = await provider.getTransactionCount(signer.address)
+    const claimTx = async () => {
+      try {
+        await claimContract.connect(signer).claim(
+          {
+            gasLimit: config.GAS_LIMIT,
+            gasPrice: config.GAS_PRICE,
+            nonce: nonce
+          }
+        )
+        tempResult.claimTx = true
+      } catch (e) {
+        console.log(`An error occurred on wallet ${signer.address} while claiming`);
+        tempResult.claimTx = `${e}`;
+      }
     }
-    try {
-      await tokenContract.connect(signer).transfer(
-        recipient,
-        walletObj.amount,
-        {
-          gasLimit: config.GAS_LIMIT,
-          gasPrice: config.GAS_PRICE,
-          nonce: await provider.getTransactionCount(signer.address)
-        }
-      );
-      tempResult.transferTx = true
-    } catch (e) {
-      console.log(`An error occurred on wallet ${signer.address} while transferring`);
-      tempResult.transferTx = `${e}`;
+
+    const transferTx = async () => {
+      await sleep(0.1)
+      try {
+        await tokenContract.connect(signer).transfer(
+          recipient,
+          walletObj.amount,
+          {
+            gasLimit: config.GAS_LIMIT,
+            gasPrice: config.GAS_PRICE,
+            nonce: nonce + 1
+          }
+        );
+        tempResult.transferTx = true
+      } catch (e) {
+        console.log(`An error occurred on wallet ${signer.address} while transferring`);
+        tempResult.transferTx = `${e}`;
+      }
     }
+    const sendTx = async (funcTx) => {
+      await funcTx()
+    }
+    const txArr = [claimTx, transferTx]
+    await doViaChunks(txArr, sendTx)
     results.push(tempResult)
     await saveJSON(results, "results", true);
   };

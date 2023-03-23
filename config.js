@@ -8,13 +8,13 @@ export const config = {
 
     RPC: "",
     CHAIN_ID: 42161,
-    GAS_LIMIT: "1500000",
+    GAS_LIMIT: "4000000",
     GAS_PRICE: 10000000000, // 10Gwei 
     CHUNCK_SIZE: 5,
 
     LEAVE_ON_WALLET_MIN: 0.5,
     LEAVE_ON_WALLET_MAX: 3,
 
-    TEST_MODE: false
+    TEST_MODE: true
 
 }
